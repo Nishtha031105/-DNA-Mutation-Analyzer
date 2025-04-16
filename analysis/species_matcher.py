@@ -1,101 +1,118 @@
-from Bio import SeqIO
-
-def load_human_cytochrome_b(file_path):
-    """Load human Cytochrome B sequence from a text file (FASTA format)."""
-    try:
-        with open(file_path, "r") as f:
-            for record in SeqIO.parse(f, "fasta"):
-                if "Homo sapiens" in record.description or "human" in record.description.lower():
-                    return str(record.seq)
-    except FileNotFoundError:
-        raise FileNotFoundError(f"File '{file_path}' not found. Ensure it's in the same directory as this script.")
-    raise ValueError("Human Cytochrome B sequence not found in the file.")
-
-def needleman_wunsch(seq1, seq2, match_score=1, mismatch_penalty=-1, gap_penalty=-1):
-    """Needleman-Wunsch global alignment algorithm using dynamic programming."""
-    m, n = len(seq1), len(seq2)
-    
-    # Initialize scoring matrix
-    score = [[0] * (n + 1) for _ in range(m + 1)]
-
-    # Initialize first row and column
-    for i in range(m + 1):
-        score[i][0] = i * gap_penalty
-    for j in range(n + 1):
-        score[0][j] = j * gap_penalty
-
-    # Fill the scoring matrix
-    for i in range(1, m + 1):
-        for j in range(1, n + 1):
-            match = score[i - 1][j - 1] + (match_score if seq1[i - 1] == seq2[j - 1] else mismatch_penalty)
-            delete = score[i - 1][j] + gap_penalty
-            insert = score[i][j - 1] + gap_penalty
-            score[i][j] = max(match, delete, insert)
-
-    # Traceback to compute alignment
-    aligned_seq1 = ""
-    aligned_seq2 = ""
-    i, j = m, n
-
-    while i > 0 and j > 0:
-        current = score[i][j]
-        diagonal = score[i - 1][j - 1]
-        up = score[i - 1][j]
-        left = score[i][j - 1]
-
-        if current == diagonal + (match_score if seq1[i - 1] == seq2[j - 1] else mismatch_penalty):
-            aligned_seq1 = seq1[i - 1] + aligned_seq1
-            aligned_seq2 = seq2[j - 1] + aligned_seq2
-            i -= 1
-            j -= 1
-        elif current == up + gap_penalty:
-            aligned_seq1 = seq1[i - 1] + aligned_seq1
-            aligned_seq2 = "-" + aligned_seq2
-            i -= 1
-        else:
-            aligned_seq1 = "-" + aligned_seq1
-            aligned_seq2 = seq2[j - 1] + aligned_seq2
-            j -= 1
-
-    # Fill the rest
-    while i > 0:
-        aligned_seq1 = seq1[i - 1] + aligned_seq1
-        aligned_seq2 = "-" + aligned_seq2
-        i -= 1
-    while j > 0:
-        aligned_seq1 = "-" + aligned_seq1
-        aligned_seq2 = seq2[j - 1] + aligned_seq2
-        j -= 1
-
-    return aligned_seq1, aligned_seq2
+import matplotlib.pyplot as plt
+import numpy as np
 
 def calculate_similarity(seq1, seq2):
-    """Calculate similarity percentage using Needleman-Wunsch alignment."""
-    aligned1, aligned2 = needleman_wunsch(seq1, seq2)
-
-    # Count matches
-    matches = sum(a == b for a, b in zip(aligned1, aligned2) if a != '-' and b != '-')
-    similarity = (matches / max(len(seq1), len(seq2))) * 100
+    """Calculate percentage similarity between two sequences"""
+    # Ensure sequences are the same length for direct comparison
+    min_len = min(len(seq1), len(seq2))
+    seq1 = seq1[:min_len]
+    seq2 = seq2[:min_len]
+    
+    # Count matching positions
+    matches = sum(n1 == n2 for n1, n2 in zip(seq1, seq2))
+    
+    # Calculate percentage
+    similarity = (matches / min_len) * 100
     return similarity
 
-def main():
-    # File path
-    human_cytb_file = "data/cytochrome_human.txt"  # Change as per your setup
-    input_dna = input("Enter the DNA sequence to compare: ").strip().upper()
+def sliding_window_similarity(human_seq, other_seq, window_size=50):
+    """Calculate similarity across sliding windows"""
+    similarities = []
+    min_len = min(len(human_seq), len(other_seq))
     
-    # Validate input
-    if not all(base in "ATCG" for base in input_dna):
-        print("Error: Input sequence must only contain A, T, C, or G.")
+    for i in range(0, min_len - window_size + 1):
+        human_window = human_seq[i:i+window_size]
+        other_window = other_seq[i:i+window_size]
+        sim = calculate_similarity(human_window, other_window)
+        similarities.append(sim)
+    
+    return similarities
+
+def find_diagnostic_sites(human_seq, other_seq, species_name, max_sites=10):
+    """Find species-specific diagnostic sites"""
+    min_len = min(len(human_seq), len(other_seq))
+    
+    print(f"\nDiagnostic Sites where {species_name} differs from human:")
+    print("=" * 50)
+    
+    differences = []
+    for pos in range(min_len):
+        if human_seq[pos] != other_seq[pos]:
+            differences.append(f"Position {pos+1}: Human={human_seq[pos]}, {species_name}={other_seq[pos]}")
+            if len(differences) >= max_sites:
+                differences.append(f"... and more differences")
+                break
+    
+    for diff in differences:
+        print(f"  {diff}")
+
+def clean_sequence(seq):
+    """Clean a DNA sequence by removing whitespace and normalizing to uppercase"""
+    return ''.join(s.upper() for s in seq if s.upper() in 'ATGC')
+
+def main():
+    # Human COI reference sequence
+    human_coi = """
+    GTCCTACTATCCATGCAGGTATCTTCTATCTTTGGGGCATGAGCGGGCATAGTAGGCACAGCCCTAAGCCTCCTCATTCG
+    AGCCGAGCTGGGCCAGCCAGGCAACCTTCTAGGTAACGACCACATCTACAACGTTATCGTCACAGCCCATGCATTCGTAA
+    TAATCTTCTTCATAGTAATACCAATAATAATCGGAGGCTTCGGAAACTGACTAGTCCCCCTTATAATCGGTGCCCCCGAC
+    ATAGCATTCCCACGAATAAATAACATAAGCTTCTGACTCCTCCCTCCATCCTTTCTCCTTCTTCTCGCATCCTCCGGAGT
+    AGAAGCTGGCGCAGGAACAGGCTGAACAGTCTACCCTCCCCTAGCAGGAAACTACTCCCACCCTGGAGCCTCCGTAGACC
+    TGGCAATCTTCTCCCTCCACCTGGCAGGTATTTCCTCCATCCTAGGAGCAATTAACTTCATCACCACAGCTATCAACATA
+    AAACCCCCTGCAATATCCCAGTATCAAACTCCCCTATTCGTCTGATCAGTCCTAATTACCGCCGTCCTACTCCTCCTGTC
+    CCTGCCCGTCCTCGCTGCAGGAATCACAATGCTGCTCACAGACCGCAACCTTAACACCACCTTCTTCGACCCGGCAGGAG
+    GAGGAGACCCAGTCCTGTACCAACACCTATTCT
+    """
+    human_coi = clean_sequence(human_coi)
+    
+    print("DNA Sequence Comparison Tool")
+    print("==========================")
+    print("\nThis tool compares a DNA sequence from your species to human DNA.")
+    
+    # Get species name
+    species_name = input("\nEnter the name of your species: ")
+    
+    # Get sequence input
+    print(f"\nEnter the DNA sequence for {species_name}:")
+    print("(A, T, G, C only - other characters will be removed)")
+    species_seq = input()
+    species_seq = clean_sequence(species_seq)
+    
+    # Check if sequence is valid
+    if not species_seq:
+        print("Error: The sequence provided is empty or contains no valid DNA bases (A, T, G, C).")
         return
-
+    
+    # Calculate overall similarity
+    similarity = calculate_similarity(human_coi, species_seq)
+    print(f"\nOverall DNA Similarity: {similarity:.2f}%")
+    
+    # Find diagnostic sites
+    find_diagnostic_sites(human_coi, species_seq, species_name)
+    
+    # Create sliding window similarity plot
+    window_similarities = sliding_window_similarity(human_coi, species_seq)
+    
+    plt.figure(figsize=(10, 6))
+    plt.plot(window_similarities)
+    plt.title(f"DNA Similarity: Human vs {species_name}")
+    plt.xlabel("Position (50 bp window)")
+    plt.ylabel("Percent Similarity")
+    plt.ylim(0, 100)
+    plt.axhline(y=90, color='g', linestyle='--', alpha=0.3, label="High conservation (90%)")
+    plt.axhline(y=50, color='r', linestyle='--', alpha=0.3, label="Low conservation (50%)")
+    plt.legend()
+    
     try:
-        human_cytb = load_human_cytochrome_b(human_cytb_file)
-
-        similarity = calculate_similarity(input_dna, human_cytb)
-        print(f"\nInput DNA is {similarity:.2f}% similar to human Cytochrome B (using DP-based alignment).")
-
-    except Exception as e:
-        print(f"Error: {e}")
+        plt.savefig("dna_comparison.png")
+        print("\nPlot saved as 'dna_comparison.png'")
+    except:
+        print("\nCouldn't save plot file")
+    
+    try:
+        plt.show()
+    except:
+        print("Couldn't display plot - you may need to run this in an environment that supports matplotlib visualization")
 
 if __name__ == "__main__":
     main()
