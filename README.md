@@ -3,7 +3,7 @@
 A powerful GUI-based bioinformatics toolkit for DNA sequence analysis. Features include DNA compression, mutation detection (HBB & TP53 genes), species similarity analysis, and DNA translation. Ideal for researchers, students, and educators.
 
 ## Project demonstration video link:  
-https://drive.google.com/file/d/1iANW0NV4_se81Ab1wrcOVQYkVHN5tnuy/view?usp=sharing
+https://drive.google.com/drive/folders/1kZQzzmTgDqzQgvIsSCaPc4fq-1QKLbcW?usp=drive_link
 
 ## 🚀 Features
 
