@@ -17,6 +17,31 @@ https://drive.google.com/drive/folders/1kZQzzmTgDqzQgvIsSCaPc4fq-1QKLbcW?usp=dri
 - **Interactive GUI** with `tkinter`
 
 ---
+## 🚀 Features
+
+- **DNA Compression** using 2-bit encoding
+- **DNA Decompression**
+- **Complementary Sequence Generation**
+- **Species Matcher** with diagnostic site detection & visualization
+- **Mutation Detection** in:
+  - **HBB gene** (Sickle cell, Hemoglobin variants, β-Thalassemia)
+  - **TP53 gene** (Cancer-associated mutations)
+- **Interactive GUI** built with `Tkinter`
+
+---
+
+## 🧱 Data Structures Used
+
+| Data Structure | Purpose |
+|----------------|---------|
+| `Dictionary (dict)` | - DNA base to bit mappings (compression) <br> - Mutation rule lookups for HBB and TP53 genes <br> - Base-pair complement mapping |
+| `List` | - Storing mismatched indices <br> - Similarity values in sliding window analysis <br> - Codon-by-codon comparisons |
+| `String` | - DNA sequences, codons, and complementary strands |
+| `Bytearray` | - Efficient storage of binary-encoded DNA in compression |
+| `Tuple` | - Returned values for structured data (e.g., result + file path) |
+| `Set` (implicitly via dict keys) | - Fast lookup for expected codons |
+
+
 
 ## 🧰 Tech Stack
 
