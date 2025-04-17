@@ -50,7 +50,7 @@ def clean_sequence(seq):
     """Clean a DNA sequence by removing whitespace and normalizing to uppercase"""
     return ''.join(s.upper() for s in seq if s.upper() in 'ATGC')
 
-def main():
+def show():
     # Human COI reference sequence
     human_coi = """
     GTCCTACTATCCATGCAGGTATCTTCTATCTTTGGGGCATGAGCGGGCATAGTAGGCACAGCCCTAAGCCTCCTCATTCG
@@ -114,5 +114,4 @@ def main():
     except:
         print("Couldn't display plot - you may need to run this in an environment that supports matplotlib visualization")
 
-if __name__ == "__main__":
-    main()
+

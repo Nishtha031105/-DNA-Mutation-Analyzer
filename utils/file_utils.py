@@ -7,12 +7,11 @@ def read_dna_file(filepath: str) -> str:
     with open(filepath, 'r') as file:
         dna = file.read()
 
-    input_dna = ''.join(dna.split()).upper()
+    input_dna = ''.join(dna.split()).upper(),
 
     for char in input_dna:
-        if char not in ['A', 'T', 'C', 'G']:
+        if char not in ['A', 'T', 'C', 'G',' ',"\n"]:
             raise ValueError(f"Invalid DNA character found: '{char}'")
-
     return input_dna
 
 def write_dna_file(filename: str, data: str):
