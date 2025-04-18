@@ -130,7 +130,7 @@ class DNASequencingApp(tk.Tk):
                              width=30)
         tp53_btn.pack(pady=5)
         
-        ttk.Label(tp53_frame, text="Detect mutations in the TP53 gene (tumor suppression)", 
+        ttk.Label(tp53_frame, text="Detect mutations in the TP53 gene(responsible for cell division and cell repairing)", 
                  wraplength=500).pack(pady=(0, 10))
         
         # HBB Button with description
@@ -142,7 +142,7 @@ class DNASequencingApp(tk.Tk):
                             width=30)
         hbb_btn.pack(pady=5)
         
-        ttk.Label(hbb_frame, text="Detect mutations in the HBB gene (sickle cell anemia)", 
+        ttk.Label(hbb_frame, text="Detect mutations in the HBB gene(responsible for hemoglobin production)", 
                  wraplength=500).pack(pady=(0, 10))
         
         # Additional info
@@ -161,9 +161,9 @@ class DNASequencingApp(tk.Tk):
         self.current_mutation_type = mutation_type
         
         if mutation_type == "tp53":
-            title = "TP53 Mutation Detector (Tumor Suppression)"
+            title = "TP53 Mutation Detector(responsible for cell division and cell repairing)"
         else:  # hbb
-            title = "HBB Mutation Detector (Sickle Cell Anemia)"
+            title = "HBB Mutation Detector(responsible for hemoglobin production)"
         
         ttk.Label(self.content_frame, text=title, 
                  font=("Arial", 16, "bold"), style="Header.TLabel").pack(pady=(20, 30))
@@ -227,7 +227,7 @@ class DNASequencingApp(tk.Tk):
                 results = get_result(input_dna)
             
             # Display results
-            self.mutation_result.delete("1.0", tk.END)
+            #self.mutation_result.delete("1.0", tk.END)
             
             if results:
                 if isinstance(results, list):

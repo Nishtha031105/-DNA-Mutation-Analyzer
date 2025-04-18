@@ -10,26 +10,26 @@ def detect_tp53_mutations(mismatch_indices):
     # Define mutation rules: absolute index → {mutated codon: message}
     messages = []
     MUTATION_RULES = {
-        37: {
+        36: {
             "CAT": "In Codon 13: Normal (CCT → Proline) has been mutated to CAT which is Histidine. Associated with early-onset cancers."
         },
         
-        115: {
+        114: {
             "TAT": "In Codon 39: Normal (CAT → Histidine) has been mutated to TAT which is Tyrosine. Found in Li-Fraumeni syndrome families."
         },
-        157: {
+        156: {
             "TAG": "In Codon 53: Normal (TGG → Tryptophan) has been mutated to TAG which is STOP. Truncated p53 protein associated with aggressive tumors."
         },
         
-        273: {
+        272: {
             "CAT": "In Codon 91: Normal (CGT → Arginine) has been mutated to CAT which is Histidine. Common mutation in multiple cancer types (R273H)."
         },
       
-        337: {
+        336: {
             "TGT": "In Codon 113: Normal (CGT → Arginine) has been mutated to TGT which is Cysteine. Disrupts p53 protein conformation."
         },
         
-        458: {
+        457: {
             "TTT": "In Codon 153: Normal (TTC → Phenylalanine) has been mutated to TTT which is still Phenylalanine. Silent mutation, no amino acid change."
         }
     }
@@ -55,7 +55,6 @@ def detect_tp53_mutations(mismatch_indices):
                 messages.append(msg)
         else:
             messages.append(f"Index {idx}: Unknown mutation site, codon {codon}.")
-    
     return messages
 
 def search_in_tp53_transcript(input_seq: str):
@@ -123,7 +122,6 @@ def search_in_tp53_transcript(input_seq: str):
         print(f"Error: {e}")
         return None
         
-example_dna = "ATGGAGGAGCCGCAGTCAGATCCTAGCGTCGAGCCCCCTCTGAGTCAGGAAACATTTTCAGACCTATGGAAGAAATCGGTAAGAGGTGCGTGTTTGTGCCT"  
-
+example_dna = "ATGGAGGAGCCGCAGTCAGATCCTAGCGTCGAGCCCCATCTGAGTCAGGAAACATTTTCAGACCTATGGAAGAAATCGGTAAGAGGTGCGTGTTTGTGCCT"  
 def get_result2(input_dna):
     return search_in_tp53_transcript(input_dna)

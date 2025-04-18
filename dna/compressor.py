@@ -4,7 +4,6 @@ base_to_bits = {
     'G': '10',
     'T': '11'
 }
-
 bits_to_base = {v: k for k, v in base_to_bits.items()}
 
 
