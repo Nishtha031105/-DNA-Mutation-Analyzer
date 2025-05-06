@@ -122,6 +122,6 @@ def search_in_tp53_transcript(input_seq: str):
         print(f"Error: {e}")
         return None
         
-example_dna = "ATGGAGGAGCCGCAGTCAGATCCTAGCGTCGAGCCCCATCTGAGTCAGGAAACATTTTCAGACCTATGGAAGAAATCGGTAAGAGGTGCGTGTTTGTGCCT"  
+example_dna = "ATGGAGGAGCCGCAGTCAGATCCTAGCGTCGAGCCCCCTCTGAGTCAGGAAACATTTTCAGACCTATGGAAGAAATCGGTAAGAGGTGCGTGTTTGTGCCTG"  
 def get_result2(input_dna):
     return search_in_tp53_transcript(input_dna)

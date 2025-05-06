@@ -6,7 +6,6 @@ base_to_bits = {
 }
 bits_to_base = {v: k for k, v in base_to_bits.items()}
 
-
 def compress(dna_str: str) -> bytearray:
     
     binary_string = ''.join([base_to_bits[base] for base in dna_str])

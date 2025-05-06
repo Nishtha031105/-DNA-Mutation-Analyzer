@@ -11,7 +11,7 @@ from dna.compressor import compress, decompress
 from dna.translator import get_complementary_sequence
 from dna.mutation_detector import get_result
 from dna.mutation_detector_2 import get_result2
-from utils.file_utils import read_dna_file, write_dna_file
+from utils.file_utils import read_dna_file
 
 class DNASequencingApp(tk.Tk):
     def __init__(self):
@@ -564,7 +564,7 @@ class DNASequencingApp(tk.Tk):
         self.species_status_var = tk.StringVar()
         ttk.Label(self.content_frame, textvariable=self.species_status_var, 
                  font=("Arial", 11, "italic")).pack(pady=10)
-    
+
     def compare_species(self):
         try:
             # Get inputs
@@ -578,14 +578,14 @@ class DNASequencingApp(tk.Tk):
                 messagebox.showerror("Error", "Please enter a DNA sequence.")
                 return
             
-            # Clean sequence
-            species_seq = ''.join(s.upper() for s in species_seq if s.upper() in 'ATGC')
+            # Clean and validate DNA sequence (simplified to match other functions)
+            species_seq = ''.join(species_seq.split()).upper()
+            for char in species_seq:
+                if char not in ['A', 'T', 'C', 'G']:
+                    messagebox.showerror("Error", f"Invalid DNA character found: '{char}'\nOnly A, T, C, G are allowed.")
+                    return
             
-            if not species_seq:
-                messagebox.showerror("Error", "The sequence provided is empty or contains no valid DNA bases (A, T, G, C).")
-                return
-            
-            # Create thread for analysis to prevent UI freeze
+            # Rest of the function remains the same...
             self.species_status_var.set("Analyzing DNA sequences... Please wait.")
             self.update()
             
@@ -594,7 +594,7 @@ class DNASequencingApp(tk.Tk):
             
         except Exception as e:
             messagebox.showerror("Error", str(e))
-            self.species_status_var.set(f"Error: {str(e)}")
+            self.species_status_var.set(f"Error: {str(e)}")
     
     def run_species_analysis(self, species_name, species_seq):
         try:
